@@ -1,1 +1,10 @@
-{}
+{
+  "auth": {
+    "sesemailforwarduicf2c4d35cf2c4d35": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}
