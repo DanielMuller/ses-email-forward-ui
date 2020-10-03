@@ -1,0 +1,17 @@
+{
+  "projectName": "sesemailforwardui",
+  "version": "3.0",
+  "frontend": "javascript",
+  "javascript": {
+    "framework": "vue",
+    "config": {
+      "SourceDir": "src",
+      "DistributionDir": "dist/spa",
+      "BuildCommand": "quasar build -m spa",
+      "StartCommand": "quasar serve --history dist/spa"
+    }
+  },
+  "providers": [
+    "awscloudformation"
+  ]
+}
