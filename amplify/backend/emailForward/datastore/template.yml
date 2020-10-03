@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Add DynamoDB access rights to AuthUser
+Parameters:
+  authRoleName:
+    Type: String
+  env:
+    Type: String
+
+Conditions:
+  ShouldNotCreateEnvResources: !Equals [ !Ref env, NONE ]
+
+Resources:
+  ForwardDefinitionsAuthPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !If [ShouldNotCreateEnvResources, 'ForwardDefinitionsAuthPolicy', !Join ['-',[ 'ForwardDefinitionsAuthPolicy', !Select [3, !Split ['-', !Ref 'AWS::StackName']], !Ref env]]]
+      Roles:
+        - !Ref authRoleName
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          -
+            Effect: Allow
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:GetItem
+              - dynamodb:DeleteItem
+              - dynamodb:Scan
+              - dynamodb:Query
+              - dynamodb:UpdateItem
+            Resource:
+              - Fn::Sub: arn:aws:dynamodb:*:${AWS::AccountId}:table/*-definitions
+          -
+            Effect: Allow
+            Action:
+              - dynamodb:Scan
+              - dynamodb:Query
+            Resource:
+              - Fn::Sub: arn:aws:dynamodb:*:${AWS::AccountId}:table/*-definitions/index/*
+          -
+            Effect: Allow
+            Action:
+              - ses:ListSuppressedDestinations
+              - ses:DeleteSuppressedDestination
+            Resource: '*'
