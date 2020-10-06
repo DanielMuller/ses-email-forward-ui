@@ -4,8 +4,7 @@
       q-toolbar
         q-btn(dense flat round icon="menu" @click="leftDrawerOpen = !leftDrawerOpen")
         q-toolbar-title
-          q-avatar
-            img(src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg")
+          q-icon(name="forward_to_inbox" size="lg")
           span.q-ml-sm Email Forwards Manager
         q-space
         q-btn(v-if="isLoggedIn" dense flat round icon="logout" @click="logout")

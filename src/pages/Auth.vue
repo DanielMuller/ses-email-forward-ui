@@ -1,13 +1,17 @@
 <template lang="pug">
   q-page.bg-grey-6.flex.flex-center
-    amplify-authenticator(
-      handleAuthStateChange=""
-      )
-      amplify-sign-in(
-        slot="sign-in"
-        hide-sign-up
-      )
-      amplify-sign-out
+    div
+      div.q-mb-md.flex.flex-center
+        q-avatar(icon="forward_to_inbox" size="150px" color="white" text-color="grey-9")
+      div
+        amplify-authenticator(
+          handleAuthStateChange=""
+          )
+          amplify-sign-in(
+            slot="sign-in"
+            hide-sign-up
+          )
+          amplify-sign-out
 </template>
 
 <script>
