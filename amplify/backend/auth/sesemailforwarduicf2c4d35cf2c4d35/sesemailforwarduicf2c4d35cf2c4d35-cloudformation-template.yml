@@ -167,7 +167,11 @@ Resources:
           Required: true
           Mutable: true
         
-      
+        -
+          Name: domains
+          Required: false
+          Mutable: true
+          AttributeDataType: String
       
       
       AutoVerifiedAttributes: !Ref autoVerifiedAttributes
