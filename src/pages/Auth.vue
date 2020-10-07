@@ -1,9 +1,9 @@
 <template lang="pug">
   q-page.bg-grey-6.flex.flex-center
     div
-      div.q-mb-md.flex.flex-center
+      div.q-mb-md.row.justify-center
         q-avatar(icon="forward_to_inbox" size="150px" color="white" text-color="grey-9")
-      div
+      div.row.justify-center
         amplify-authenticator(
           handleAuthStateChange=""
           )
@@ -16,6 +16,7 @@
 
 <script>
 import { onAuthUIStateChange } from '@aws-amplify/ui-components'
+
 export default {
   name: 'Auth',
   created () {
