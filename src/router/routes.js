@@ -11,6 +11,11 @@ const routes = [
         meta: {
           requiresAuth: true
         }
+      },
+      {
+        path: 'domains/:domain/forwards',
+        name: 'forwards',
+        component: () => import('pages/Forwards.vue')
       }
     ]
   },

@@ -10,6 +10,10 @@
         q-btn(v-if="isLoggedIn" dense flat round icon="logout" @click="logout")
 
     q-drawer(show-if-above v-model="leftDrawerOpen" side="left" bordered)
+      .q-pa-sm
+        .text-h6 Redirects
+        q-list(dense)
+          q-item(v-for="domain in domains" :key="domain" class="q-my-sm" clickable v-ripple :to="{ name: 'forwards', params: {domain: domain }}") {{ domain }}
     q-page-container
       router-view
 </template>
@@ -21,7 +25,8 @@ export default {
   data () {
     return {
       leftDrawerOpen: false,
-      isLoggedIn: false
+      isLoggedIn: false,
+      domains: null
     }
   },
   beforeCreate () {
@@ -29,6 +34,7 @@ export default {
       .then(user => {
         if (user) {
           this.isLoggedIn = true
+          this.domains = user.attributes['custom:domains'].split(',').map(e => e.trim())
         }
       })
       .catch(err => {}) // eslint-disable-line handle-callback-err
