@@ -44,6 +44,10 @@ module.exports = function (/* ctx */) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
+      env: {
+        TABLE_NAME: process.env.TABLE_NAME,
+        TABLE_REGION: process.env.TABLE_REGION
+      },
       vueRouterMode: 'history', // available values: 'hash', 'history'
 
       // transpile: false,

@@ -12,7 +12,7 @@ frontend:
         - npm ci
     build:
       commands:
-        - quasar build -m spa
+        - TABLE_NAME=$TABLE_NAME TABLE_REGION=$TABLE_REGION quasar build -m spa
   artifacts:
     baseDirectory: /dist/spa
     files:
