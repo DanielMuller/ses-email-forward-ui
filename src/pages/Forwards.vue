@@ -1,9 +1,13 @@
 <template lang="pug">
   q-page(padding)
     div(v-if="domains.includes(domain)")
-      .text-h4 Redirects for domain <em>{{ domain }}</em>
-      div Fetch from {{ tableName }} in {{ tableRegion }}
-      pre {{ data }}
+      forwards-list(
+        :title="title"
+        :data="definitions"
+        rowKey="alias",
+        :blacklisted="blacklisted"
+        :loading="loading"
+      )
     div(v-else)
       div.justify-center
         q-banner.bg-negative.text-white.rounded-borders
@@ -15,15 +19,21 @@
 <script>
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { unmarshall } from '@aws-sdk/util-dynamodb'
+import ForwardsList from 'components/ForwardsList'
 
 export default {
   name: 'Forwards',
+  components: {
+    ForwardsList
+  },
   data () {
     return {
       domain: null,
       domains: [],
-      data: null,
+      definitions: [],
       loading: false,
+      blacklisted: [],
+      dynamodb: null,
       tableName: process.env.TABLE_NAME,
       tableRegion: process.env.TABLE_REGION
     }
@@ -34,7 +44,16 @@ export default {
       .then(user => {
         if (user) {
           this.domains = user.attributes['custom:domains'].split(',').map(e => e.trim())
-          this.getData()
+          if (this.domains.includes(this.domain)) {
+            this.$Amplify.Auth.currentCredentials().then(creds => {
+              const params = {
+                region: this.tableRegion,
+                credentials: this.$Amplify.Auth.essentialCredentials(creds)
+              }
+              this.dynamodb = new DynamoDB(params)
+              this.getData()
+            })
+          }
         }
       })
       .catch(err => {}) // eslint-disable-line handle-callback-err
@@ -46,32 +65,32 @@ export default {
   },
   methods: {
     getData: function () {
-      this.data = null
+      this.definitions = []
+
       if (this.domains.includes(this.domain)) {
         this.loading = true
-        this.$Amplify.Auth.currentCredentials().then(creds => {
-          const client = new DynamoDB({
-            region: this.tableRegion,
-            credentials: this.$Amplify.Auth.essentialCredentials(creds)
-          })
-          const params = {
-            TableName: this.tableName,
-            KeyConditionExpression: '#domain = :domain',
-            ExpressionAttributeValues: {
-              ':domain': {
-                S: this.domain
-              }
-            },
-            ExpressionAttributeNames: {
-              '#domain': 'domain'
+        const params = {
+          TableName: this.tableName,
+          KeyConditionExpression: '#domain = :domain',
+          ExpressionAttributeValues: {
+            ':domain': {
+              S: this.domain
             }
+          },
+          ExpressionAttributeNames: {
+            '#domain': 'domain'
           }
-          client.query(params).then(data => {
-            this.data = unmarshall(data.Item)
-            this.loading = false
-          })
+        }
+        this.dynamodb.query(params).then(data => {
+          this.definitions = data.Items.map(e => { return unmarshall(e) })
+          this.loading = false
         })
       }
+    }
+  },
+  computed: {
+    title () {
+      return `Redirects for ${this.domain}`
     }
   }
 }
