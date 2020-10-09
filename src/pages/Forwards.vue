@@ -64,7 +64,7 @@ export default {
     next()
   },
   methods: {
-    getData: function () {
+    getData: async function () {
       this.definitions = []
 
       if (this.domains.includes(this.domain)) {
@@ -81,10 +81,15 @@ export default {
             '#domain': 'domain'
           }
         }
-        this.dynamodb.query(params).then(data => {
-          this.definitions = data.Items.map(e => { return unmarshall(e) })
-          this.loading = false
-        })
+        let items
+        do {
+          items = await this.dynamodb.query(params)
+          items.Items.forEach((item) => {
+            this.definitions.push(unmarshall(item))
+          })
+          params.ExclusiveStartKey = items.LastEvaluatedKey
+        } while (typeof items.LastEvaluatedKey !== 'undefined')
+        this.loading = false
       }
     }
   },
