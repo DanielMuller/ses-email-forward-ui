@@ -32,6 +32,7 @@ Resources:
               - dynamodb:UpdateItem
             Resource:
               - Fn::Sub: arn:aws:dynamodb:*:${AWS::AccountId}:table/*-definitions
+              - Fn::Sub: arn:aws:dynamodb:*:${AWS::AccountId}:table/*-bounces
           -
             Effect: Allow
             Action:
@@ -39,6 +40,7 @@ Resources:
               - dynamodb:Query
             Resource:
               - Fn::Sub: arn:aws:dynamodb:*:${AWS::AccountId}:table/*-definitions/index/*
+              - Fn::Sub: arn:aws:dynamodb:*:${AWS::AccountId}:table/*-bounces/index/*
           -
             Effect: Allow
             Action:

@@ -35,6 +35,7 @@ export default {
       blacklisted: [],
       dynamodb: null,
       tableDefinitions: `${process.env.TABLE_PREFIX}-definitions`,
+      tableBounces: `${process.env.TABLE_PREFIX}-bounces`,
       tableRegion: process.env.TABLE_REGION
     }
   },
@@ -52,6 +53,7 @@ export default {
               }
               this.dynamodb = new DynamoDB(params)
               this.getData()
+              this.getBlacklisted()
             })
           }
         }
@@ -90,6 +92,24 @@ export default {
           params.ExclusiveStartKey = items.LastEvaluatedKey
         } while (typeof items.LastEvaluatedKey !== 'undefined')
         this.loading = false
+      }
+    },
+    getBlacklisted: async function () {
+      if (this.domains.includes(this.domain)) {
+        const params = {
+          TableName: this.tableBounces
+        }
+        let items
+        do {
+          items = await this.dynamodb.scan(params)
+          items.Items.forEach((item) => {
+            const destination = unmarshall(item).destination
+            if (!this.blacklisted.includes(destination)) {
+              this.blacklisted.push(destination)
+            }
+          })
+          params.ExclusiveStartKey = items.LastEvaluatedKey
+        } while (typeof items.LastEvaluatedKey !== 'undefined')
       }
     }
   },
