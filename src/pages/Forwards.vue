@@ -34,7 +34,7 @@ export default {
       loading: false,
       blacklisted: [],
       dynamodb: null,
-      tableName: process.env.TABLE_NAME,
+      tableDefinitions: `${process.env.TABLE_PREFIX}-definitions`,
       tableRegion: process.env.TABLE_REGION
     }
   },
@@ -70,7 +70,7 @@ export default {
       if (this.domains.includes(this.domain)) {
         this.loading = true
         const params = {
-          TableName: this.tableName,
+          TableName: this.tableDefinitions,
           KeyConditionExpression: '#domain = :domain',
           ExpressionAttributeValues: {
             ':domain': {
