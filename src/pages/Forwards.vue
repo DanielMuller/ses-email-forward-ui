@@ -7,6 +7,9 @@
         rowKey="alias",
         :blacklisted="blacklisted"
         :loading="loading"
+        :domain="domain"
+        @put-item="putItem"
+        @delete-item="deleteItem"
       )
     div(v-else)
       div.justify-center
@@ -18,7 +21,7 @@
 
 <script>
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
-import { unmarshall } from '@aws-sdk/util-dynamodb'
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb'
 import ForwardsList from 'components/ForwardsList'
 
 export default {
@@ -111,6 +114,24 @@ export default {
           params.ExclusiveStartKey = items.LastEvaluatedKey
         } while (typeof items.LastEvaluatedKey !== 'undefined')
       }
+    },
+    putItem: function (item) {
+      item.alias = item.alias.toLowerCase().trim()
+      item.type = item.type.toLowerCase().trim()
+      item.domain = item.domain.toLowerCase().trim()
+      item.destinations = item.destinations.map(item => { return item.toLowerCase().trim() }).filter(item => item !== '')
+
+      this.dynamodb.putItem({ TableName: this.tableDefinitions, Item: marshall(item) })
+      this.definitions = this.definitions.filter(e => (e.alias !== item.alias || e.domain !== item.domain))
+      this.definitions.push(item)
+    },
+    deleteItem: function (item) {
+      var params = {
+        Key: marshall({ alias: item.alias, domain: item.domain }),
+        TableName: this.tableDefinitions
+      }
+      this.dynamodb.deleteItem(params)
+      this.definitions = this.definitions.filter(e => (e.alias !== item.alias || e.domain !== item.domain))
     }
   },
   computed: {

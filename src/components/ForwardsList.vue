@@ -11,9 +11,13 @@
     :filter="filter"
     :blacklisted="blacklisted"
     :loading="loading"
+    :domain="domain"
   )
     template(v-slot:top-right)
+      q-btn.q-mx-md(icon="add" round color="positive" text-color="black" @click="createAlias")
+        q-tooltip New redirection
       q-input(outlined dense debounce="300" v-model="filter" placeholder="Filter")
+        q-icon.cursor-pointer(v-if="filter !== ''" name="close" @click="filter = ''" slot="append")
         q-icon(slot="append" name="search")
     template(v-slot:body-cell-destinations="props")
       q-td(:props="props")
@@ -40,8 +44,43 @@
         q-btn-group(flat)
           q-btn(icon="edit" size="sm" @click="editAlias(props.row)")
             q-tooltip Edit
-          q-btn(icon="delete" size="sm" text-color="negative" @click="deleteAlias(props.row)")
+          q-btn(icon="delete" size="sm" text-color="negative" @click="confirmDeleteAlias(props.row)")
             q-tooltip Delete
+  q-dialog(v-model="confirm" persistent)
+    q-card
+      q-card-section(class="row items-center")
+        q-avatar(icon="delete" color="negative" text-color="white")
+        span.q-ml-sm Are you sure you want to delete {{ aliasToDelete }} ?
+
+      q-card-actions(align="right")
+        q-btn(flat label="Cancel" color="primary" v-close-popup)
+        q-btn(flat label="Delete" color="primary" @click="deleteAlias")
+
+  q-dialog(v-model="editDialog" persistent)
+    q-card(style="min-width: 400px; max-width:400px")
+      q-card-section.row.items-center.q-pb-none
+        .text-h6(v-if="!editItem.domain") Create new forward
+        .text-h6(v-else) Edit forward
+        q-space
+        q-btn(icon="close" flat round dense v-close-popup)
+      q-card-section.q-gutter-md
+        q-checkbox(v-model="editItem.active" label="Active")
+        q-select(outlined v-model="editItem.type" :options="itemTypeOptions" label="Type" :rules="[val => !!val || 'Field is required']")
+        q-input(:readonly="!!editItem.domain" outlined v-model="editItem.alias" type="email" :suffix="'@' + domain" label="Alias" :rules="[val => !!val || 'Field is required']")
+        q-select(
+          outlined
+          v-model="editItem.destinations"
+          use-input
+          use-chips
+          multiple
+          input-debouce="0"
+          @new-value="destinationsCreateValue"
+          :options="destinationsFilterOptions"
+          @filter="destinationsFilterFn"
+          :rules="[val => !!val || 'Field is required']"
+        )
+      q-card-actions(align="right")
+        q-btn(flat label="Save" color="primary" @click="saveAlias" :disable="!canSaveAlias")
 </template>
 
 <script>
@@ -56,15 +95,60 @@ export default {
         page: 1,
         rowsPerPage: 0
         // rowsNumber: xx if getting data from a server
-      }
+      },
+      confirm: false,
+      itemToDelete: null,
+      editDialog: false,
+      editItem: {},
+      itemTypeOptions: ['Person', 'Group', 'Function', 'External'],
+      destinationsFilterOptions: this.availableDests
     }
   },
   methods: {
     editAlias (item) {
-      console.log('edit', item.alias)
+      this.editItem = { ...item }
+      this.editDialog = true
     },
-    deleteAlias (item) {
-      console.log('delete', item.alias)
+    confirmDeleteAlias (item) {
+      this.confirm = true
+      this.itemToDelete = item
+    },
+    deleteAlias () {
+      this.$emit('delete-item', this.itemToDelete)
+      this.itemToDelete = null
+      this.confirm = false
+    },
+    saveAlias () {
+      if (!this.editItem.domain) {
+        this.editItem.domain = this.domain
+      }
+      this.$emit('put-item', this.editItem)
+      this.editItem = {}
+      this.editDialog = false
+    },
+    createAlias () {
+      this.editItem = { active: true }
+      this.editDialog = true
+    },
+    destinationsCreateValue (val, done) {
+      if (val.length > 0) {
+        if (!this.availableDests.includes(val)) {
+          this.availableDests.push(val)
+        }
+        done(val, 'toggle')
+      }
+    },
+    destinationsFilterFn (val, update) {
+      update(() => {
+        if (val === '') {
+          this.destinationsFilterOptions = this.availableDests
+        } else {
+          const needle = val.toLowerCase()
+          this.destinationsFilterOptions = this.availableDests.filter(
+            v => v.toLowerCase().indexOf(needle) > -1
+          )
+        }
+      })
     }
   },
   props: [
@@ -72,7 +156,8 @@ export default {
     'data',
     'rowKey',
     'blacklisted',
-    'loading'
+    'loading',
+    'domain'
   ],
   computed: {
     columns () {
@@ -116,6 +201,22 @@ export default {
           sortable: false
         }
       ]
+    },
+    aliasToDelete () {
+      if (this.itemToDelete) {
+        return `${this.itemToDelete.alias}@${this.itemToDelete.domain}`
+      } else {
+        return ''
+      }
+    },
+    availableDests () {
+      return this.data.map(e => { return e.alias })
+    },
+    canSaveAlias () {
+      const aliasValid = (this.editItem.alias && typeof this.editItem.alias === 'string' && this.editItem.alias.trim() !== '')
+      const typeValid = (this.editItem.type && typeof this.editItem.type === 'string' && this.editItem.type.trim() !== '')
+      const destinationsValid = (this.editItem.destinations && Array.isArray(this.editItem.destinations) && this.editItem.destinations.length > 0)
+      return aliasValid && typeValid && destinationsValid
     }
   }
 }
