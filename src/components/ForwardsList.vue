@@ -25,12 +25,13 @@
           q-item(v-for="destination in props.row.destinations" :key="destination")
             q-item-section(no-wrap)
               span {{ destination }}
-                q-icon.q-pl-xs(
+                q-icon.q-pl-xs.cursor-pointer(
                   v-if="blacklisted.includes(destination)"
                   size="xs"
                   name="block"
                   color="negative"
                   dense
+                  @click="blacklistDetails(destination)"
                 )
     template(v-slot:body-cell-active="props")
       q-td(:props="props")
@@ -149,6 +150,9 @@ export default {
           )
         }
       })
+    },
+    blacklistDetails (destination) {
+      this.$emit('display-blacklist-details', destination)
     }
   },
   props: [

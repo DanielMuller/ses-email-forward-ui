@@ -15,7 +15,26 @@ const routes = [
       {
         path: 'domains/:domain/forwards',
         name: 'forwards',
-        component: () => import('pages/Forwards.vue')
+        component: () => import('pages/Forwards.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'blocked/ses',
+        name: 'sessuppressed',
+        component: () => import('pages/SesSuppressed.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'blocked/blacklisted',
+        name: 'blacklisted',
+        component: () => import('pages/Blacklisted.vue'),
+        meta: {
+          requiresAuth: true
+        }
       }
     ]
   },

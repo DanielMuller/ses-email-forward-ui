@@ -10,7 +10,9 @@
         :domain="domain"
         @put-item="putItem"
         @delete-item="deleteItem"
+        @display-blacklist-details="displayBlacklistDetails"
       )
+      blacklisted-detail(:showDetail="showBlacklistDetail" :destination="destinationDetail" :data="dataDetail" @hide="showBlacklistDetail=false" @restore="restore")
     div(v-else)
       div.justify-center
         q-banner.bg-negative.text-white.rounded-borders
@@ -23,12 +25,18 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb'
 import ForwardsList from 'components/ForwardsList'
+import BlacklistedDetail from 'components/BlacklistedDetail'
+import RestoreBlacklisted from 'src/mixins/restoreBlacklisted'
 
 export default {
   name: 'Forwards',
   components: {
-    ForwardsList
+    ForwardsList,
+    BlacklistedDetail
   },
+  mixins: [
+    RestoreBlacklisted
+  ],
   data () {
     return {
       domain: null,
@@ -39,7 +47,11 @@ export default {
       dynamodb: null,
       tableDefinitions: `${process.env.TABLE_PREFIX}-definitions`,
       tableBounces: `${process.env.TABLE_PREFIX}-bounces`,
-      tableRegion: process.env.TABLE_REGION
+      tableRegion: process.env.TABLE_REGION,
+      destinationDetail: null,
+      dataDetail: null,
+      blacklistedDetails: [],
+      showBlacklistDetail: false
     }
   },
   beforeMount () {
@@ -102,11 +114,13 @@ export default {
         const params = {
           TableName: this.tableBounces
         }
+        this.blacklistedDetails = []
         let items
         do {
           items = await this.dynamodb.scan(params)
           items.Items.forEach((item) => {
             const destination = unmarshall(item).destination
+            this.blacklistedDetails.push(unmarshall(item))
             if (!this.blacklisted.includes(destination)) {
               this.blacklisted.push(destination)
             }
@@ -132,6 +146,19 @@ export default {
       }
       this.dynamodb.deleteItem(params)
       this.definitions = this.definitions.filter(e => (e.alias !== item.alias || e.domain !== item.domain))
+    },
+    displayBlacklistDetails: function (destination) {
+      this.destinationDetail = destination
+      this.showBlacklistDetail = true
+      this.dataDetail = this.blacklistedDetails.filter(e => e.destination === destination)
+      this.dataDetail.sort((a, b) => {
+        return b.createdAt - a.createdAt
+      })
+    },
+    restore: function (destination) {
+      this.showBlacklistDetail = false
+      this.deleteBlacklisted(this.dynamodb, this.dataDetail)
+      this.blacklisted = this.blacklisted.filter(e => e !== destination)
     }
   },
   computed: {

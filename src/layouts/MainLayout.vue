@@ -13,7 +13,14 @@
       .q-pa-sm
         .text-h6 Redirects
         q-list(dense)
-          q-item(v-for="domain in domains" :key="domain" class="q-my-sm" clickable v-ripple :to="{ name: 'forwards', params: {domain: domain }}") {{ domain }}
+          q-item(v-for="domain in domains" :key="domain" clickable v-ripple :to="{ name: 'forwards', params: {domain: domain }}")
+            q-item-section {{ domain }}
+        .text-h6 Blocked addresses
+        q-list(dense)
+          q-item(clickable v-ripple :to="{name:'blacklisted'}")
+            q-item-section Blacklisted
+          q-item(clickable v-ripple :to="{name:'sessuppressed'}")
+            q-item-section Suppressed by AWS SES
     q-page-container
       router-view
 </template>
