@@ -56,14 +56,6 @@ export default {
       this.$Amplify.Auth.signOut()
       this.$router.replace({ name: 'auth' }).catch(err => {}) // eslint-disable-line handle-callback-err
     }
-  },
-  computed: {
-    lang () {
-      return this.$q.lang.getLocale()
-    },
-    iso () {
-      return this.$q.lang.isoName
-    }
   }
 }
 </script>
