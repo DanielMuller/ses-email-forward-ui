@@ -5,6 +5,11 @@
 </template>
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  meta () {
+    return {
+      title: this.$t('appName')
+    }
+  }
 }
 </script>

@@ -4,7 +4,7 @@
 export default {
   failed: 'Action failed',
   success: 'Action was successful',
-  appName: 'Email Forwards Manager',
+  appName: 'Email Alias Manager',
   redirects: 'Redirects',
   blockedAddresses: 'Blocked Addresses',
   blacklisted: 'Blacklisted',
