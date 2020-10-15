@@ -18,7 +18,7 @@
         q-banner.bg-negative.text-white.rounded-borders
           template(v-slot:avatar)
             q-icon(name="highlight_off")
-          span You aren't allowed to manage the domain <em>{{ domain }}</em>
+          span {{ $t('forbidden_manage_domain') }}  <em>{{ domain }}</em>
 </template>
 
 <script>
@@ -163,7 +163,7 @@ export default {
   },
   computed: {
     title () {
-      return `Redirects for ${this.domain}`
+      return `${this.$t('redirectsFor')} ${this.domain}`
     }
   }
 }

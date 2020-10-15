@@ -1,20 +1,20 @@
 <template lang="pug">
 q-page(padding)
   div.q-pa-md(v-if="!loading")
-    .text-h6 Blacklisted Addresses
+    .text-h6 {{ $t('blacklistedTitle') }}
     div(v-if="blacklisted.length>0")
       q-banner.bg-warning.q-pa-lg.q-mb-md(rounded)
         template(v-slot:avatar)
           q-icon(name="warning")
-        .text-h6 Before deleting, make sure that the destination will accept the message
-        div If your messages are being rejected again, you are taking the risk of having your account suspended
+        .text-h6 {{ $t('restoreWarningTitle') }}
+        div {{ $t('restoreWarningText') }}
       q-markup-table
         thead
           tr
-            th.text-left Address
-            th.text-left Last Updated
-            th.text-left Valid Until
-            th.text-left Actions
+            th.text-left {{ $t('address') }}
+            th.text-left {{ $t('lastUpdated') }}
+            th.text-left {{ $t('validUntil') }}
+            th.text-left {{ $t('actions') }}
         tbody
           tr(v-for="item in blacklistedSummary" :key="item.destination")
             td {{ item.destination }}
@@ -28,8 +28,8 @@ q-page(padding)
       q-banner.bg-positive.q-pa-lg(rounded)
         template(v-slot:avatar)
           q-icon(name="thumb_up" color="white")
-        .text-h6 You are all good
-        div No addresses on the blacklist
+        .text-h6 {{ $t('restoreOKTitle') }}
+        div {{ $t('restoreOKText') }}
 </template>
 
 <script>

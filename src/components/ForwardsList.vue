@@ -15,8 +15,8 @@
   )
     template(v-slot:top-right)
       q-btn.q-mx-md(icon="add" round color="positive" text-color="black" @click="createAlias")
-        q-tooltip New redirection
-      q-input(outlined dense debounce="300" v-model="filter" placeholder="Filter")
+        q-tooltip {{ $t('newRedirection') }}
+      q-input(outlined dense debounce="300" v-model="filter" :placeholder="$t('filter')")
         q-icon.cursor-pointer(v-if="filter !== ''" name="close" @click="filter = ''" slot="append")
         q-icon(slot="append" name="search")
     template(v-slot:body-cell-destinations="props")
@@ -44,9 +44,9 @@
       q-td(:props="props")
         q-btn-group(flat)
           q-btn(icon="edit" size="sm" @click="editAlias(props.row)")
-            q-tooltip Edit
+            q-tooltip {{ $t('edit') }}
           q-btn(icon="delete" size="sm" text-color="negative" @click="confirmDeleteAlias(props.row)")
-            q-tooltip Delete
+            q-tooltip {{ $t('delete') }}
   q-dialog(v-model="confirm" persistent)
     q-card
       q-card-section(class="row items-center")
@@ -60,14 +60,14 @@
   q-dialog(v-model="editDialog" persistent)
     q-card(style="min-width: 400px; max-width:400px")
       q-card-section.row.items-center.q-pb-none
-        .text-h6(v-if="!editItem.domain") Create new forward
-        .text-h6(v-else) Edit forward
+        .text-h6(v-if="!editItem.domain") {{ $t('createNewForward') }}
+        .text-h6(v-else) {{ $t('editForward') }}
         q-space
         q-btn(icon="close" flat round dense v-close-popup)
       q-card-section.q-gutter-md
-        q-checkbox(v-model="editItem.active" label="Active")
-        q-select(outlined v-model="editItem.type" :options="itemTypeOptions" label="Type" :rules="[val => !!val || 'Field is required']")
-        q-input(:readonly="!!editItem.domain" outlined v-model="editItem.alias" type="email" :suffix="'@' + domain" label="Alias" :rules="[val => !!val || 'Field is required']")
+        q-checkbox(v-model="editItem.active" :label="$t('active')")
+        q-select(outlined v-model="editItem.type" :options="itemTypeOptions" :label="$t('type')" emit-value :display-value="$t(editItem.type)" :rules="[val => !!val || $t('fieldRequired')]")
+        q-input(:readonly="!!editItem.domain" outlined v-model="editItem.alias" type="email" :suffix="'@' + domain" :label="$t('alias')" :rules="[val => !!val || $t('fieldRequired')]")
         q-select(
           outlined
           v-model="editItem.destinations"
@@ -78,10 +78,10 @@
           @new-value="destinationsCreateValue"
           :options="destinationsFilterOptions"
           @filter="destinationsFilterFn"
-          :rules="[val => !!val || 'Field is required']"
+          :rules="[val => !!val || $t('fieldRequired')]"
         )
       q-card-actions(align="right")
-        q-btn(flat label="Save" color="primary" @click="saveAlias" :disable="!canSaveAlias")
+        q-btn(flat :label="$t('save')" color="primary" @click="saveAlias" :disable="!canSaveAlias")
 </template>
 
 <script>
@@ -101,7 +101,12 @@ export default {
       itemToDelete: null,
       editDialog: false,
       editItem: {},
-      itemTypeOptions: ['Person', 'Group', 'Function', 'External'],
+      itemTypeOptions: [
+        { label: this.$t('person'), value: 'person' },
+        { label: this.$t('group'), value: 'group' },
+        { label: this.$t('function'), value: 'function' },
+        { label: this.$t('external'), value: 'external' }
+      ],
       destinationsFilterOptions: this.availableDests
     }
   },
@@ -168,7 +173,7 @@ export default {
       return [
         {
           name: 'type',
-          label: 'Type',
+          label: this.$t('type'),
           required: true,
           align: 'left',
           field: row => row.type,
@@ -176,7 +181,7 @@ export default {
         },
         {
           name: 'alias',
-          label: 'Alias',
+          label: this.$t('alias'),
           required: true,
           align: 'left',
           field: row => row.alias,
@@ -184,7 +189,7 @@ export default {
         },
         {
           name: 'destinations',
-          label: 'Destinations',
+          label: this.$t('destinations'),
           required: false,
           align: 'left',
           field: row => row.destinations,
@@ -192,14 +197,14 @@ export default {
         },
         {
           name: 'active',
-          label: 'Active',
+          label: this.$t('active'),
           required: true,
           align: 'left',
           sortable: true
         },
         {
           name: 'action',
-          label: 'Action',
+          label: this.$t('actions'),
           required: false,
           align: 'left',
           sortable: false

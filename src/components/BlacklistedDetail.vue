@@ -9,14 +9,14 @@
         q-markup-table(dense flat)
           thead
             tr
-              th.text-left Creation
-              th.text-left Valid Until
-              th.text-left Reason
-              th.text-left Action
-              th.text-left Type
-              th.text-left Sub Type / Arrival Date
-              th.text-left Status / FeedbackId
-              th.text-left Detail / User Agent
+              th.text-left {{ $t('creation') }}
+              th.text-left {{ $t('validUntil') }}
+              th.text-left {{ $t('reason') }}
+              th.text-left {{ $t('actions') }}
+              th.text-left {{ $t('type') }}
+              th.text-left {{ $t('subType') }} / {{ $t('arrivalDate') }}
+              th.text-left {{ $t('status') }} / {{ $t('feedbackId') }}
+              th.text-left {{ $t('detail') }} / {{ $t('userAgent') }}
           tbody
             tr.vertical-top(v-for="item in data" :key="item.createdAt")
               td {{ dateFormat(item.createdAt) }}
@@ -30,7 +30,7 @@
                 pre.q-pa-none.q-ma-none {{ item.type === 'bounce' ? item.diagnosticCode : item.userAgent }}
       q-separator
       q-card-actions(align="right")
-        q-btn(color="primary" @click="restore") Restore
+        q-btn(color="primary" @click="restore") {{ $t('restore') }}
 </template>
 
 <script>

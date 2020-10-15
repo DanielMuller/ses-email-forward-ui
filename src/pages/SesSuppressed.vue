@@ -1,13 +1,13 @@
 <template lang="pug">
 q-page(padding)
   div.q-pa-md(v-if="suppressed")
-    .text-h6 Adresses suppressed by AWS SES
+    .text-h6 {{ $t('sesSuppressedTitle') }}
     div(v-if="suppressed.length>0")
       q-banner.bg-red-3.q-pa-lg.q-mb-md(rounded)
         template(v-slot:avatar)
           q-icon(name="warning" color="red-10")
-        .text-h6 Before deleting, make sure that the destination will accept the message
-        div If your messages are being rejected again, you are taking the risk of having your account suspended
+        .text-h6 {{ $t('restoreWarningTitle') }}
+        div {{ $t('restoreWarningText') }}
       q-markup-table
         thead
           tr
@@ -27,8 +27,8 @@ q-page(padding)
       q-banner.bg-positive.q-pa-lg(rounded)
         template(v-slot:avatar)
           q-icon(name="thumb_up" color="white")
-        .text-h6 You are all good
-        div No addresses on the AWS SES suppression list
+        .text-h6 {{ $t('restoreOKTitle') }}
+        div {{ $t('restoreOKText') }}
 </template>
 
 <script>

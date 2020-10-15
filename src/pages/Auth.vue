@@ -5,6 +5,7 @@
         q-avatar(icon="forward_to_inbox" size="150px" color="white" text-color="grey-9")
       div.row.justify-center
         amplify-authenticator(
+          :key="$q.lang.isoName"
           handleAuthStateChange=""
           )
           amplify-sign-in(
@@ -12,13 +13,19 @@
             hide-sign-up
           )
           amplify-sign-out
+      div.row.justify-end
+        language-switcher
 </template>
 
 <script>
 import { onAuthUIStateChange } from '@aws-amplify/ui-components'
+import LanguageSwitcher from 'components/LanguageSwitcher'
 
 export default {
   name: 'Auth',
+  components: {
+    LanguageSwitcher
+  },
   created () {
     onAuthUIStateChange((authState, authData) => {
       this.authState = authState
