@@ -12,5 +12,11 @@
       "service": "dynamodb",
       "providerPlugin": "awscloudformation"
     }
+  },
+  "iam": {
+    "generic": {
+      "service": "iam",
+      "providerPlugin": "awscloudformation"
+    }
   }
 }
