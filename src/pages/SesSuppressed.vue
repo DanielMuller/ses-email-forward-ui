@@ -82,15 +82,15 @@ export default {
       const diff = date.getDateDiff(today, formattedString, unit)
       let ago = ''
       switch (diff) {
-        case (0):
-          ago = 'today'
-          break
-        case (1):
-          ago = 'yesterday'
-          break
-        default:
-          ago = `${diff} days ago`
-          break
+      case (0):
+        ago = 'today'
+        break
+      case (1):
+        ago = 'yesterday'
+        break
+      default:
+        ago = `${diff} days ago`
+        break
       }
       return `${formattedString} (${ago})`
     },
