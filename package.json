@@ -12,13 +12,16 @@
   },
   "dependencies": {
     "@aws-amplify/ui-vue": "^0.2.22",
+    "@aws-sdk/client-cloudwatch": "^1.0.0-gamma.11",
     "@aws-sdk/client-dynamodb": "^1.0.0-gamma.11",
     "@aws-sdk/client-sesv2": "^1.0.0-gamma.11",
     "@aws-sdk/util-dynamodb": "^1.0.0-gamma.2",
     "@quasar/extras": "^1.9.9",
     "aws-amplify": "^3.3.3",
+    "chart.js": "^2.9.3",
     "core-js": "^3.6.5",
     "quasar": "^1.14.1",
+    "vue-chartjs": "^3.5.1",
     "vue-i18n": "^8.22.0"
   },
   "devDependencies": {

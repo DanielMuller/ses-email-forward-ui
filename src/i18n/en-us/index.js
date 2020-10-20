@@ -43,6 +43,16 @@ export default {
   restoreWarningText: 'If your messages are being rejected again, you are taking the risk of having your account suspended',
   restoreOKTitle: 'You are all good',
   restoreOKText: 'No addresses on the blacklist',
+  address: 'Address',
   lastUpdated: 'Last Updated',
-  sesSuppressedTitle: 'Addresses suppressed by AWS SES'
+  sesSuppressedTitle: 'Addresses suppressed by AWS SES',
+  logs: 'Logs and Anlaytics',
+  overviewDashboard: 'Overview Dashboard',
+  interval: 'Interval',
+  hour: 'hour',
+  hours: 'hours',
+  day: 'day',
+  days: 'days',
+  week: 'week',
+  weeks: 'weeks'
 }

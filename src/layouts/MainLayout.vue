@@ -22,6 +22,10 @@
             q-item-section {{ $t('blacklisted') }}
           q-item(clickable v-ripple :to="{name:'sessuppressed'}")
             q-item-section {{ $t('sesSuppressed') }}
+        .text-h6 {{ $t('logs') }}
+        q-list(dense)
+          q-item(clickable v-ripple :to="{name:'dashboard'}")
+            q-item-section {{ $t('overviewDashboard') }}
     q-page-container
       router-view
 </template>

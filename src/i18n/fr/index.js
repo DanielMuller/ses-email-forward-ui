@@ -42,5 +42,14 @@ export default {
   restoreOKText: 'Aucune adresse n\'est bloquée',
   address: 'Adresse',
   lastUpdated: 'Dernière mise à jour',
-  sesSuppressedTitle: 'Adresses supprimées par AWS SES'
+  sesSuppressedTitle: 'Adresses supprimées par AWS SES',
+  logs: 'Logs et Analytiques',
+  overviewDashboard: 'Tableau de bord général',
+  interval: 'Intervalle',
+  hour: 'heure',
+  hours: 'heures',
+  day: 'jour',
+  days: 'jours',
+  week: 'semaine',
+  weeks: 'semaines'
 }
