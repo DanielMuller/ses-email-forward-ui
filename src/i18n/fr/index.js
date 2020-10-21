@@ -51,5 +51,11 @@ export default {
   day: 'jour',
   days: 'jours',
   week: 'semaine',
-  weeks: 'semaines'
+  weeks: 'semaines',
+  passed: 'Passé',
+  bounces: 'Destinataire invalide',
+  rejected: 'Rejettés',
+  rejected_dmarc: 'Rejettés: DMARC',
+  rejected_spam: 'Rejettés: SPAM',
+  no_messages: 'Pas de messages à afficher'
 }

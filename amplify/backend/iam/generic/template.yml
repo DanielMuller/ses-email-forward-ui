@@ -24,3 +24,13 @@ Resources:
             Action:
               - cloudwatch:GetMetricStatistics
             Resource: '*'
+          -
+            Effect: Allow
+            Action:
+              - logs:StartQuery
+            Resource: '*'
+          -
+            Effect: Allow
+            Action:
+              - logs:GetQueryResults
+            Resource: '*'
