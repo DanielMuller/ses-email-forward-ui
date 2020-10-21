@@ -57,5 +57,6 @@ export default {
   rejected: 'Rejettés',
   rejected_dmarc: 'Rejettés: DMARC',
   rejected_spam: 'Rejettés: SPAM',
-  no_messages: 'Pas de messages à afficher'
+  hint_destination: 'Pour des redirections internes, le domaine peut-être omis',
+  invalid_field: 'Valeur invalide'
 }

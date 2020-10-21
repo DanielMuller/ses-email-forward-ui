@@ -60,5 +60,6 @@ export default {
   rejected: 'Rejected',
   rejected_dmarc: 'Rejected: DMARC',
   rejected_spam: 'Rejected: SPAM',
-  no_messages: 'No messages to display'
+  hint_destination: 'For iternal redirections, the domain can be omitted',
+  invalid_field: 'Invalid Entry'
 }

@@ -67,7 +67,7 @@
       q-card-section.q-gutter-md
         q-checkbox(v-model="editItem.active" :label="$t('active')")
         q-select(outlined v-model="editItem.type" :options="itemTypeOptions" :label="$t('type')" emit-value :display-value="$t(editItem.type)" :rules="[val => !!val || $t('fieldRequired')]")
-        q-input(:readonly="!!editItem.domain" outlined v-model="editItem.alias" type="email" :suffix="'@' + domain" :label="$t('alias')" :rules="[val => !!val || $t('fieldRequired')]")
+        q-input(:readonly="!!editItem.domain" outlined v-model="editItem.alias" type="email" :suffix="'@' + domain" :label="$t('alias')" :rules="[val => !!val || $t('fieldRequired'), val => /^[0-9A-Za-z]+$/.test(val) || $t('invalid_field')]")
         q-select(
           outlined
           v-model="editItem.destinations"
@@ -80,6 +80,8 @@
           @filter="destinationsFilterFn"
           :rules="[val => !!val || $t('fieldRequired')]"
         )
+          template(v-slot:hint)
+            div {{ $t('hint_destination') }}
       q-card-actions(align="right")
         q-btn(flat :label="$t('save')" color="primary" @click="saveAlias" :disable="!canSaveAlias")
 </template>
