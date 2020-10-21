@@ -1,12 +1,13 @@
 <template lang="pug">
-  q-page.bg-grey-6.flex.flex-center
-    div
+  q-page.bg-grey-6.column.items-center(padding)
+    div.col
       div.q-mb-md.row.justify-center
         q-avatar(icon="forward_to_inbox" size="150px" color="white" text-color="grey-9")
       div.row.justify-center
         amplify-authenticator(
           :key="$q.lang.isoName"
           handleAuthStateChange=""
+          style="--container-display:inline"
           )
           amplify-sign-in(
             slot="sign-in"
