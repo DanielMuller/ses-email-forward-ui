@@ -8,7 +8,12 @@
           span.q-ml-sm {{ $t('appName') }}
         q-space
         language-switcher
-        q-btn.q-ml-md(v-if="isLoggedIn" dense flat round icon="logout" @click="logout")
+        q-btn.q-ml-md(v-if="isLoggedIn" dense flat round icon="account_box")
+          q-menu
+            q-list(style="min-width:100px")
+              q-item(clickable v-close-popup :to="{name:'password'}")
+                q-item-section {{ $t('change_password') }}
+        q-btn(v-if="isLoggedIn" dense flat round icon="logout" @click="logout")
 
     q-drawer(show-if-above v-model="leftDrawerOpen" side="left" bordered)
       .q-pa-sm

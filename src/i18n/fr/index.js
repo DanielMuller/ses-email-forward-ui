@@ -57,6 +57,13 @@ export default {
   rejected: 'Rejettés',
   rejected_dmarc: 'Rejettés: DMARC',
   rejected_spam: 'Rejettés: SPAM',
+  no_messages: 'Pas de messages à afficher',
+  change_password: 'Modifier le mot de passe',
   hint_destination: 'Pour des redirections internes, le domaine peut-être omis',
-  invalid_field: 'Valeur invalide'
+  invalid_field: 'Valeur invalide',
+  old_password: 'Mot de passe actuel',
+  new_password: 'Nouveau mot de passe',
+  new_password_repeat: 'Répétez le nouveau mot de passe',
+  update: 'Mise à jour',
+  change_password_error: 'Impossible de changer le mot de passe'
 }

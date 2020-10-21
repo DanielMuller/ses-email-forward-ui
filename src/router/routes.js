@@ -21,6 +21,14 @@ const routes = [
         }
       },
       {
+        path: 'profile/password',
+        name: 'password',
+        component: () => import('pages/Profile/Password.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
         path: 'blocked/ses',
         name: 'sessuppressed',
         component: () => import('pages/SesSuppressed.vue'),

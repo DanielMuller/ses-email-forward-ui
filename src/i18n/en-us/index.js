@@ -60,6 +60,14 @@ export default {
   rejected: 'Rejected',
   rejected_dmarc: 'Rejected: DMARC',
   rejected_spam: 'Rejected: SPAM',
+  no_messages: 'No messages to display',
+  change_password: 'Change Password',
   hint_destination: 'For iternal redirections, the domain can be omitted',
-  invalid_field: 'Invalid Entry'
+  invalid_field: 'Invalid Entry',
+  old_password: 'Current password',
+  new_password: 'New password',
+  new_password_repeat: 'Repeat new password',
+  update: 'Update',
+  change_password_error: 'Unable to change password',
+  pwd_updated: 'password updated'
 }
