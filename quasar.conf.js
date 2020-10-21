@@ -46,7 +46,8 @@ module.exports = function (/* ctx */) {
     build: {
       env: {
         TABLE_PREFIX: process.env.TABLE_PREFIX,
-        TABLE_REGION: process.env.TABLE_REGION
+        TABLE_REGION: process.env.TABLE_REGION,
+        LOCALE: process.env.LOCALE
       },
       vueRouterMode: 'history', // available values: 'hash', 'history'
 

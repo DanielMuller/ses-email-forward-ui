@@ -44,7 +44,8 @@ export default {
     }
   },
   created () {
-    const locale = this.$q.localStorage.getItem('locale') || 'en-us'
+    const defaultLocale = process.env.LOCALE || 'en-us'
+    const locale = this.$q.localStorage.getItem('locale') || defaultLocale
     this.setLocale(locale)
     this.locale = locale
   }
