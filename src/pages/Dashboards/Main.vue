@@ -15,16 +15,16 @@ q-page(padding)
         tr.bg-grey-4
           th.text-left Timestamp
           th.text-left Reason
-          th.text-left Recipient
           th.text-left Source
+          th.text-left Recipient
       tbody
         tr(v-if="rejectedLogs.length===0")
           td(colspan="4") {{ $t('no_messages') }}
         tr(v-for="msg in rejectedLogs" :key="msg.timestamp")
           td.text-left {{msg.timestamp}}
           td.text-left {{msg.reason}}
-          td.text-left {{msg.recipient}}
           td.text-left {{msg.source}}
+          td.text-left {{msg.recipient}}
   div.q-mb-lg
     q-markup-table
       thead
@@ -34,14 +34,14 @@ q-page(padding)
         tr.bg-grey-4
           th.text-left Timestamp
           th.text-left Source
-          th.text-left Destination
+          th.text-left Recipient
       tbody
         tr(v-if="passedLogs.length===0")
           td(colspan="3") No messages to display
         tr(v-for="msg in passedLogs" :key="msg.timestamp")
           td.text-left {{msg.timestamp}}
           td.text-left {{msg.source}}
-          td.text-left {{msg.destination}}
+          td.text-left {{msg.recipient}}
   div.q-mb-lg
     q-markup-table
       thead
@@ -265,7 +265,7 @@ export default {
         {
           name: 'passed',
           logGroupName: '/aws/lambda/sesEmailForward-process',
-          queryString: 'fields @timestamp as timestamp, Records.0.ses.mail.commonHeaders.from.0 as source, Records.0.ses.mail.destination.0 as destination | filter (_logLevel == \'info\' AND msg=\'Event\') | sort @timestamp desc'
+          queryString: 'fields @timestamp as timestamp, Records.0.ses.mail.commonHeaders.from.0 as source, Records.0.ses.receipt.recipients.0 as recipient | filter (_logLevel == \'info\' AND msg=\'Event\') | sort @timestamp desc'
         }
       ]
       logQueries.forEach(async q => {
