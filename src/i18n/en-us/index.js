@@ -69,5 +69,19 @@ export default {
   new_password_repeat: 'Repeat new password',
   update: 'Update',
   change_password_error: 'Unable to change password',
-  pwd_updated: 'password updated'
+  pwd_updated: 'password updated',
+  'reject-spam': 'Rejected: SPAM',
+  'reject-virus': 'Rejected: Virus',
+  'reject-dkim': 'Rejected: DKIM',
+  'reject-spf': 'Rejected: SPF',
+  'reject-dmarc': 'Rejected: DMARC',
+  'bounce-noexist': 'Bounced: Inexistant',
+  'bounce-blacklisted': 'Bounced: No destination',
+  'delivered-success': 'Delivered',
+  'delivered-failure': 'Delivery: Failed',
+  sent: 'Sent',
+  error: 'Errors',
+  timestamp: 'Timestamp',
+  from: 'From',
+  recipient: 'Recipient'
 }

@@ -4,7 +4,16 @@ q-page(padding)
   div.row.justify-end
     div(style="max-width:300px")
       q-select(outlined dense options-dense v-model="interval" :label="$t('interval')" :options="intervalOptions" @input="getDasboardData")
-  div.q-mb-md(v-if="metricsReady===3")
+  div.q-mb-md(v-if="metricsReady>=9")
+    div.row
+      div.col
+      div.col
+        pie-chart(:chart-data="passspam" :options="passspamoptions")
+      div.col
+        pie-chart(:chart-data="sentbounce" :options="sentbounceoptions")
+      div.col
+
+  div.q-mb-md(v-if="metricsReady>=9")
     bar-chart(:chart-data="datacollection" :options="options")
   div.q-mb-lg
     q-markup-table
@@ -13,34 +22,17 @@ q-page(padding)
           th.text-left(colspan="4")
             .text-h6 {{ $t('rejected') }}
         tr.bg-grey-4
-          th.text-left Timestamp
-          th.text-left Reason
-          th.text-left Source
-          th.text-left Recipient
+          th.text-left {{ $t('timestamp') }}
+          th.text-left {{ $t('reason') }}
+          th.text-left {{ $t('from') }}
+          th.text-left {{ $t('recipient') }}
       tbody
         tr(v-if="rejectedLogs.length===0")
           td(colspan="4") {{ $t('no_messages') }}
         tr(v-for="msg in rejectedLogs" :key="msg.timestamp")
           td.text-left {{msg.timestamp}}
           td.text-left {{msg.reason}}
-          td.text-left {{msg.source}}
-          td.text-left {{msg.recipient}}
-  div.q-mb-lg
-    q-markup-table
-      thead
-        tr
-          th.text-left(colspan="3")
-            .text-h6 {{ $t('passed') }}
-        tr.bg-grey-4
-          th.text-left Timestamp
-          th.text-left Source
-          th.text-left Recipient
-      tbody
-        tr(v-if="passedLogs.length===0")
-          td(colspan="3") No messages to display
-        tr(v-for="msg in passedLogs" :key="msg.timestamp")
-          td.text-left {{msg.timestamp}}
-          td.text-left {{msg.source}}
+          td.text-left {{msg.from}}
           td.text-left {{msg.recipient}}
   div.q-mb-lg
     q-markup-table
@@ -49,22 +41,66 @@ q-page(padding)
           th.text-left(colspan="2")
             .text-h6 {{ $t('bounces') }}
         tr.bg-grey-4
-          th.text-left Timestamp
-          th.text-left Recipient
+          th.text-left {{ $t('timestamp') }}
+          th.text-left {{ $t('reason') }}
+          th.text-left {{ $t('from') }}
+          th.text-left {{ $t('recipient') }}
       tbody
         tr(v-if="bouncesLogs.length===0")
-          td(colspan="2") No messages to display
+          td(colspan="2") {{ $t('no_messages') }}
         tr(v-for="msg in bouncesLogs" :key="msg.timestamp")
           td.text-left {{msg.timestamp}}
+          td.text-left {{msg.reason}}
+          td.text-left {{msg.from}}
+          td.text-left {{msg.recipient}}
+  div.q-mb-lg
+    q-markup-table
+      thead
+        tr
+          th.text-left(colspan="3")
+            .text-h6 {{ $t('sent') }}
+        tr.bg-grey-4
+          th.text-left {{ $t('timestamp') }}
+          th.text-left {{ $t('from') }}
+          th.text-left {{ $t('recipient') }}
+      tbody
+        tr(v-if="sentLogs.length===0")
+          td(colspan="3") {{ $t('no_messages') }}
+        tr(v-for="msg in sentLogs" :key="msg.timestamp")
+          td.text-left {{msg.timestamp}}
+          td.text-left {{msg.from}}
+          td.text-left {{msg.recipient}}
+  div.q-mb-lg
+    q-markup-table
+      thead
+        tr
+          th.text-left(colspan="3")
+            .text-h6 {{ $t('error') }}
+        tr.bg-grey-4
+          th.text-left {{ $t('timestamp') }}
+          th.text-left {{ $t('from') }}
+          th.text-left {{ $t('recipient') }}
+      tbody
+        tr(v-if="errorLogs.length===0")
+          td(colspan="3") {{ $t('no_messages') }}
+        tr(v-for="msg in errorLogs" :key="msg.timestamp")
+          td.text-left {{msg.timestamp}}
+          td.text-left {{msg.from}}
           td.text-left {{msg.recipient}}
 </template>
 
 <script>
 import { CloudWatch } from '@aws-sdk/client-cloudwatch'
 import { CloudWatchLogs } from '@aws-sdk/client-cloudwatch-logs'
-import { colors } from 'quasar'
-const { getPaletteColor } = colors
 import BarChart from 'components/BarChart'
+import PieChart from 'components/PieChart'
+
+const datasetsCommon = {
+  fill: true,
+  data: null,
+  barPercentage: 1.0,
+  categoryPercentage: 1.0
+}
 
 export default {
   name: 'Dashboard',
@@ -74,7 +110,8 @@ export default {
       logs: null,
       rejectedLogs: [],
       bouncesLogs: [],
-      passedLogs: [],
+      sentLogs: [],
+      errorLogs: [],
       metricsReady: 0,
       interval: null,
       intervalOptions: [
@@ -154,34 +191,97 @@ export default {
       datacollection: {
         datasets: [
           {
-            label: this.$t('passed'),
-            backgroundColor: getPaletteColor('green-5'),
-            fill: true,
-            data: null,
-            barPercentage: 1.0,
-            categoryPercentage: 1.0
+            label: this.$t('reject-spam'),
+            backgroundColor: '#bc2d02',
+            ...datasetsCommon
           },
           {
-            label: this.$t('rejected_spam'),
-            backgroundColor: getPaletteColor('red-5'),
-            fill: true,
-            data: null,
-            barPercentage: 1.0,
-            categoryPercentage: 1.0
+            label: this.$t('reject-virus'),
+            backgroundColor: '#a80000',
+            ...datasetsCommon
           },
           {
-            label: this.$t('rejected_dmarc'),
-            backgroundColor: getPaletteColor('orange-5'),
-            fill: true,
-            data: null,
-            barPercentage: 1.0
+            label: this.$t('reject-dkim'),
+            backgroundColor: '#d15a04',
+            ...datasetsCommon
+          },
+          {
+            label: this.$t('reject-spf'),
+            backgroundColor: '#e68706',
+            ...datasetsCommon
+          },
+          {
+            label: this.$t('reject-dmarc'),
+            backgroundColor: '#fbb509',
+            ...datasetsCommon
+          },
+          {
+            label: this.$t('bounce-noexist'),
+            backgroundColor: '#0a84ff',
+            ...datasetsCommon
+          },
+          {
+            label: this.$t('bounce-blacklisted'),
+            backgroundColor: '#0a16ff',
+            ...datasetsCommon
+          },
+          {
+            label: this.$t('delivered-success'),
+            backgroundColor: '#009408',
+            ...datasetsCommon
+          },
+          {
+            label: this.$t('delivered-failure'),
+            backgroundColor: '#bd00b0',
+            ...datasetsCommon
           }
         ]
+      },
+      passspam: {
+        datasets: [{
+          data: [0, 0],
+          backgroundColor: [
+            '#2ca02c',
+            '#d62728'
+          ]
+        }],
+        labels: [
+          'Passed',
+          'Rejected'
+        ]
+      },
+      passspamoptions: {
+        tooltips: {
+          callbacks: {
+            label: this.labels
+          }
+        }
+      },
+      sentbounce: {
+        datasets: [{
+          data: [0, 0],
+          backgroundColor: [
+            '#2ca02c',
+            '#d62728'
+          ]
+        }],
+        labels: [
+          'Sent',
+          'Bounced'
+        ]
+      },
+      sentbounceoptions: {
+        tooltips: {
+          callbacks: {
+            label: this.labels
+          }
+        }
       }
     }
   },
   components: {
-    BarChart
+    BarChart,
+    PieChart
   },
   beforeMount () {
     this.interval = this.intervalOptions.filter(e => e.value === 14 * 86400)[0]
@@ -211,9 +311,15 @@ export default {
     },
     getMetrics (startTime, endTime) {
       const wantedMetrics = [
-        'pass',
-        'spam',
-        'dmarc_reject'
+        'reject-spam',
+        'reject-virus',
+        'reject-dkim',
+        'reject-spf',
+        'reject-dmarc',
+        'bounce-noexist',
+        'bounce-blacklisted',
+        'delivered-success',
+        'delivered-failure'
       ]
       this.options.scales.xAxes[0].ticks.min = new Date(startTime * 1000).toISOString()
       this.options.scales.xAxes[0].ticks.max = new Date(endTime * 1000).toISOString()
@@ -231,6 +337,7 @@ export default {
         this.cw.getMetricStatistics(params).then(res => {
           const i = wantedMetrics.lastIndexOf(metric)
           const data = res.Datapoints.map(e => { return { x: e.Timestamp.toISOString(), y: e.Sum } })
+          const sum = data.map(e => { return parseInt(e.y) }).reduce((a, b) => a + b, 0)
           for (let j = startTime; j <= endTime; j += this.interval.period) {
             const test = data.filter(el => { return el.x === new Date(j * 1000).toISOString() })
             if (test.length === 0) {
@@ -240,6 +347,16 @@ export default {
           data.sort((a, b) => { return (a.x < b.x) ? 1 : -1 })
           this.datacollection.datasets[i].data = data
 
+          if (metric.startsWith('reject')) {
+            this.passspam.datasets[0].data[1] += sum
+          } else {
+            this.passspam.datasets[0].data[0] += sum
+            if (metric.startsWith('delivered')) {
+              this.sentbounce.datasets[0].data[0] += sum
+            } else {
+              this.sentbounce.datasets[0].data[1] += sum
+            }
+          }
           this.metricsReady++
         })
       })
@@ -248,24 +365,31 @@ export default {
       return new Promise(resolve => setTimeout(resolve, ms))
     },
     async getLogs (startTime, endTime) {
-      this.passedLogs = []
+      this.sentLogs = []
+      this.errorLogs = []
       this.rejectedLogs = []
       this.bouncesLogs = []
+
       const logQueries = [
         {
           name: 'rejected',
           logGroupName: '/aws/lambda/sesEmailForward-spam',
-          queryString: 'fields @timestamp as timestamp, msg as reason , recipients.0 as recipient, source | filter _logLevel=\'info\' AND (msg=\'spam\' OR msg=\'dmarc-reject\') | sort @timestamp desc'
+          queryString: 'fields @timestamp as timestamp,reason,from,recipient | filter _logLevel=\'info\' and msg=\'reject\' | sort @timestamp desc | limit 1000'
         },
         {
           name: 'bounces',
           logGroupName: '/aws/lambda/sesEmailForward-process',
-          queryString: 'fields @timestamp as timestamp, originalRecipient as recipient | filter (_logLevel = \'warn\' AND msg = \'bounce\') | sort @timestamp desc'
+          queryString: 'fields @timestamp as timestamp,reason,from,recipient | filter _logLevel=\'info\' and msg=\'bounce\' | sort @timestamp desc | limit 1000'
         },
         {
-          name: 'passed',
+          name: 'sent',
           logGroupName: '/aws/lambda/sesEmailForward-process',
-          queryString: 'fields @timestamp as timestamp, Records.0.ses.mail.commonHeaders.from.0 as source, Records.0.ses.receipt.recipients.0 as recipient | filter (_logLevel == \'info\' AND msg=\'Event\') | sort @timestamp desc'
+          queryString: 'fields @timestamp as timestamp,from,recipient| filter _logLevel=\'info\' and msg=\'sendMessage\' and reason=\'success\'| sort @timestamp desc| limit 1000'
+        },
+        {
+          name: 'error',
+          logGroupName: '/aws/lambda/sesEmailForward-process',
+          queryString: 'fields @timestamp as timestamp,from,recipient| filter _logLevel=\'info\' and msg=\'sendMessage\' and reason=\'failure\'| sort @timestamp desc| limit 1000'
         }
       ]
       logQueries.forEach(async q => {
@@ -294,6 +418,17 @@ export default {
           return dataLine
         })
       })
+    },
+    labels (tooltipItem, data) {
+      const dataset = data.datasets[tooltipItem.datasetIndex]
+      const label = data.labels[tooltipItem.index]
+      const total = dataset.data.reduce(function (previousValue, currentValue, currentIndex, array) {
+        return previousValue + currentValue
+      })
+      const currentValue = dataset.data[tooltipItem.index]
+      const percentage = ((currentValue / total) * 100).toFixed(2)
+
+      return `${label}: ${currentValue} (${percentage}%)`
     }
   }
 }

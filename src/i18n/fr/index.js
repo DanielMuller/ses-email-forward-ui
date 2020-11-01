@@ -66,5 +66,20 @@ export default {
   new_password_repeat: 'Répétez le nouveau mot de passe',
   update: 'Mise à jour',
   change_password_error: 'Impossible de changer le mot de passe',
-  pwd_updated: 'Mot de passe mis à jour'
+  pwd_updated: 'Mot de passe mis à jour',
+  'reject-spam': 'Rejetté: SPAM',
+  'reject-virus': 'Rejetté: Virus',
+  'reject-dkim': 'Rejetté: DKIM',
+  'reject-spf': 'Rejetté: SPF',
+  'reject-dmarc': 'Rejetté: DMARC',
+  'bounce-noexist': 'Retourné: Inexistant',
+  'bounce-blacklisted': 'Retourné: No destination',
+  'delivered-success': 'Délivré',
+  'delivered-failure': 'Livraison: Erreur',
+  sent: 'Envoyés',
+  error: 'Erreurs',
+  timestamp: 'Date/Heure',
+  from: 'Expéditeur',
+  recipient: 'Destinataire',
+  'no-messages': 'Aucun messages à afficher'
 }
