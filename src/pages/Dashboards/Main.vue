@@ -6,12 +6,12 @@ q-page(padding)
       q-select(outlined dense options-dense v-model="interval" :label="$t('interval')" :options="intervalOptions" @input="getDasboardData")
   div.q-mb-md(v-if="metricsReady>=9")
     div.row
+      div.col.gt-xs
       div.col
+        pie-chart(:chart-data="passspam" :options="pieoptions")
       div.col
-        pie-chart(:chart-data="passspam" :options="passspamoptions")
-      div.col
-        pie-chart(:chart-data="sentbounce" :options="sentbounceoptions")
-      div.col
+        pie-chart(:chart-data="sentbounce" :options="pieoptions")
+      div.col.gt-xs
 
   div.q-mb-md(v-if="metricsReady>=9")
     bar-chart(:chart-data="datacollection" :options="options")
@@ -186,6 +186,11 @@ export default {
               }
             }
           ]
+        },
+        legend: {
+          labels: {
+            boxWidth: 12
+          }
         }
       },
       datacollection: {
@@ -250,13 +255,6 @@ export default {
           'Rejected'
         ]
       },
-      passspamoptions: {
-        tooltips: {
-          callbacks: {
-            label: this.labels
-          }
-        }
-      },
       sentbounce: {
         datasets: [{
           data: [0, 0],
@@ -266,14 +264,19 @@ export default {
           ]
         }],
         labels: [
-          'Sent',
+          'Delivered',
           'Bounced'
         ]
       },
-      sentbounceoptions: {
+      pieoptions: {
         tooltips: {
           callbacks: {
             label: this.labels
+          }
+        },
+        legend: {
+          labels: {
+            boxWidth: 12
           }
         }
       }
