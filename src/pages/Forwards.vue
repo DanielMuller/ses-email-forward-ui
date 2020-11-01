@@ -73,7 +73,7 @@ export default {
           }
         }
       })
-      .catch(err => {}) // eslint-disable-line handle-callback-err
+      .catch(err => {}) // eslint-disable-line node/handle-callback-err
   },
   beforeRouteUpdate (to, from, next) {
     this.domain = to.params.domain
@@ -140,7 +140,7 @@ export default {
       this.definitions.push(item)
     },
     deleteItem: function (item) {
-      var params = {
+      const params = {
         Key: marshall({ alias: item.alias, domain: item.domain }),
         TableName: this.tableDefinitions
       }

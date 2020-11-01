@@ -32,7 +32,7 @@ export default {
       this.authState = authState
       this.user = authData
       if (this.authState === 'signedin' && this.user) {
-        this.$router.replace({ name: 'home' }).catch(err => {}) // eslint-disable-line handle-callback-err
+        this.$router.replace({ name: 'home' }).catch(err => {}) // eslint-disable-line node/handle-callback-err
       }
     })
   },

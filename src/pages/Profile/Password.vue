@@ -39,7 +39,7 @@ export default {
             position: 'center',
             message: this.$t('pwd_updated')
           })
-          this.$router.replace({ name: 'home' }).catch(err => {}) // eslint-disable-line handle-callback-err
+          this.$router.replace({ name: 'home' }).catch(err => {}) // eslint-disable-line node/handle-callback-err
         })
         .catch(err => {
           this.$q.notify({

@@ -57,7 +57,7 @@ export default {
           })
         }
       })
-      .catch(err => {}) // eslint-disable-line handle-callback-err
+      .catch(err => {}) // eslint-disable-line node/handle-callback-err
   },
   methods: {
     getSuppressed: async function () {
@@ -105,7 +105,7 @@ export default {
         if (res) {
           this.suppressed = this.suppressed.filter(el => el.EmailAddress !== address)
         }
-      }).catch(err => { // eslint-disable-line handle-callback-err
+      }).catch(err => { // eslint-disable-line node/handle-callback-err
         this.$q.notify({
           type: 'negative',
           message: 'Unable to suppress the address',

@@ -58,12 +58,12 @@ export default {
           this.domains = user.attributes['custom:domains'].split(',').map(e => e.trim())
         }
       })
-      .catch(err => {}) // eslint-disable-line handle-callback-err
+      .catch(err => {}) // eslint-disable-line node/handle-callback-err
   },
   methods: {
     logout: function () {
       this.$Amplify.Auth.signOut()
-      this.$router.replace({ name: 'auth' }).catch(err => {}) // eslint-disable-line handle-callback-err
+      this.$router.replace({ name: 'auth' }).catch(err => {}) // eslint-disable-line node/handle-callback-err
     }
   }
 }

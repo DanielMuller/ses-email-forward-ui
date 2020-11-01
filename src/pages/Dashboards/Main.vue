@@ -199,7 +199,7 @@ export default {
           })
         }
       })
-      .catch(err => {}) // eslint-disable-line handle-callback-err
+      .catch(err => {}) // eslint-disable-line node/handle-callback-err
   },
   methods: {
     getDasboardData () {
