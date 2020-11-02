@@ -4,7 +4,7 @@ q-page(padding)
   div.row.justify-end
     div(style="max-width:300px")
       q-select(outlined dense options-dense v-model="interval" :label="$t('interval')" :options="intervalOptions" @input="getDasboardData")
-  div.q-mb-md(v-if="metricsReady>=9")
+  div.q-mb-md(v-if="metricsReady >= wantedMetrics.length")
     div.row
       div.col.gt-xs
       div.col
@@ -13,7 +13,7 @@ q-page(padding)
         pie-chart(:chart-data="sentbounce" :options="pieoptions")
       div.col.gt-xs
 
-  div.q-mb-md(v-if="metricsReady>=9")
+  div.q-mb-md(v-if="metricsReady >= wantdMetrics.length")
     bar-chart(:chart-data="datacollection" :options="options")
   div.q-mb-lg
     q-markup-table
@@ -193,6 +193,18 @@ export default {
           }
         }
       },
+      wantedMetrics: [
+        'reject-spam',
+        'reject-virus',
+        'reject-nomx',
+        'reject-dkim',
+        'reject-spf',
+        'reject-dmarc',
+        'bounce-noexist',
+        'bounce-blacklisted',
+        'delivered-success',
+        'delivered-failure'
+      ],
       datacollection: {
         datasets: [
           {
@@ -318,22 +330,10 @@ export default {
       this.getLogs(startTime, endTime)
     },
     getMetrics (startTime, endTime) {
-      const wantedMetrics = [
-        'reject-spam',
-        'reject-virus',
-        'reject-nomx',
-        'reject-dkim',
-        'reject-spf',
-        'reject-dmarc',
-        'bounce-noexist',
-        'bounce-blacklisted',
-        'delivered-success',
-        'delivered-failure'
-      ]
       this.options.scales.xAxes[0].ticks.min = new Date(startTime * 1000).toISOString()
       this.options.scales.xAxes[0].ticks.max = new Date(endTime * 1000).toISOString()
 
-      wantedMetrics.forEach(metric => {
+      this.wantedMetrics.forEach(metric => {
         const params = {
           StartTime: new Date(startTime * 1000),
           EndTime: new Date(endTime * 1000),
@@ -347,7 +347,7 @@ export default {
         this.sentbounce.datasets[0].data = [0, 0]
 
         this.cw.getMetricStatistics(params).then(res => {
-          const i = wantedMetrics.lastIndexOf(metric)
+          const i = this.wantedMetrics.lastIndexOf(metric)
           const data = res.Datapoints.map(e => { return { x: e.Timestamp.toISOString(), y: e.Sum } })
           const sum = data.map(e => { return parseInt(e.y) }).reduce((a, b) => a + b, 0)
           for (let j = startTime; j <= endTime; j += this.interval.period) {
