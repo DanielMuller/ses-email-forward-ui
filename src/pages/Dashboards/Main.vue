@@ -206,6 +206,11 @@ export default {
             ...datasetsCommon
           },
           {
+            label: this.$t('reject-nomx'),
+            backgroundColor: '#bc2d02',
+            ...datasetsCommon
+          },
+          {
             label: this.$t('reject-dkim'),
             backgroundColor: '#d15a04',
             ...datasetsCommon
@@ -316,6 +321,7 @@ export default {
       const wantedMetrics = [
         'reject-spam',
         'reject-virus',
+        'reject-nomx',
         'reject-dkim',
         'reject-spf',
         'reject-dmarc',

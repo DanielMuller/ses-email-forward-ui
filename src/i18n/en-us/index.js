@@ -72,6 +72,7 @@ export default {
   pwd_updated: 'password updated',
   'reject-spam': 'Rejected: SPAM',
   'reject-virus': 'Rejected: Virus',
+  'reject-nomx': 'Rejected: No MX',
   'reject-dkim': 'Rejected: DKIM',
   'reject-spf': 'Rejected: SPF',
   'reject-dmarc': 'Rejected: DMARC',
