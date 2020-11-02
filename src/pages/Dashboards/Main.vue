@@ -343,6 +343,9 @@ export default {
           Statistics: ['Sum']
         }
         this.metricsReady = 0
+        this.passspam.datasets[0].data = [0, 0]
+        this.sentbounce.datasets[0].data = [0, 0]
+
         this.cw.getMetricStatistics(params).then(res => {
           const i = wantedMetrics.lastIndexOf(metric)
           const data = res.Datapoints.map(e => { return { x: e.Timestamp.toISOString(), y: e.Sum } })
