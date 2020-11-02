@@ -13,7 +13,7 @@ q-page(padding)
         pie-chart(:chart-data="sentbounce" :options="pieoptions")
       div.col.gt-xs
 
-  div.q-mb-md(v-if="metricsReady >= wantdMetrics.length")
+  div.q-mb-md(v-if="metricsReady >= wantedMetrics.length")
     bar-chart(:chart-data="datacollection" :options="options")
   div.q-mb-lg
     q-markup-table
