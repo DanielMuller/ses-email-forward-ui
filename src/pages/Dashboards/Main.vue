@@ -126,7 +126,7 @@ export default {
           period: 60
         },
         {
-          label: `12 ${this.$t('hour')}`,
+          label: `12 ${this.$t('hours')}`,
           value: 12 * 3600,
           period: 300
         },
