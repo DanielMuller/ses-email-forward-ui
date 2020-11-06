@@ -284,7 +284,7 @@ export default {
           data: [0, 0],
           backgroundColor: [
             '#2ca02c',
-            '#d62728'
+            '#0a84ff'
           ]
         }],
         labels: [
