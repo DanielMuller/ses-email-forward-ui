@@ -2,8 +2,9 @@
 q-page(padding)
   .text-h6 {{ $t('overviewDashboard') }}
   div.row.justify-end
-    div(style="max-width:300px")
-      q-select(outlined dense options-dense v-model="interval" :label="$t('interval')" :options="intervalOptions" @input="getDasboardData")
+    div(style="max-width:300px;min-width:120px")
+      q-select(outlined dense options-dense v-model="interval" :label="$t('interval')" :options="intervalOptions" @input="getDashboardData")
+    q-btn.q-ml-sm(round icon="cached" @click="")
   div.q-mb-md(v-if="metricsReady >= wantedMetrics.length")
     div.row
       div.col.gt-xs
