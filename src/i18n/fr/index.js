@@ -68,6 +68,7 @@ export default {
   change_password_error: 'Impossible de changer le mot de passe',
   pwd_updated: 'Mot de passe mis à jour',
   'reject-spam': 'Rejetté: SPAM',
+  'reject-spamassassin': 'Rejetté: Spamassassin',
   'reject-virus': 'Rejetté: Virus',
   'reject-nomx': 'Rejetté: Pas de MX',
   'reject-dkim': 'Rejetté: DKIM',

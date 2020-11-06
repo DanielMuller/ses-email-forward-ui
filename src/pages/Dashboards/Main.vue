@@ -195,6 +195,7 @@ export default {
       },
       wantedMetrics: [
         'reject-spam',
+        'reject-spamassassin',
         'reject-virus',
         'reject-nomx',
         'reject-dkim',
@@ -209,6 +210,11 @@ export default {
         datasets: [
           {
             label: this.$t('reject-spam'),
+            backgroundColor: '#bc2d02',
+            ...datasetsCommon
+          },
+          {
+            label: this.$t('reject-spamassassin'),
             backgroundColor: '#bc2d02',
             ...datasetsCommon
           },
@@ -385,7 +391,7 @@ export default {
       const logQueries = [
         {
           name: 'rejected',
-          logGroupName: '/aws/lambda/sesEmailForward-spam',
+          logGroupNames: ['/aws/lambda/sesEmailForward-spam', '/aws/lambda/sesEmailForward-spamassassin'],
           queryString: 'fields @timestamp as timestamp,reason,from,recipient | filter _logLevel=\'info\' and msg=\'reject\' | sort @timestamp desc | limit 1000'
         },
         {
@@ -406,11 +412,15 @@ export default {
       ]
       logQueries.forEach(async q => {
         const params = {
-          logGroupName: q.logGroupName,
           startTime,
           endTime,
           queryString: q.queryString,
           limit: 400
+        }
+        if (q.logGroupNames) {
+          params.logGroupNames = q.logGroupNames
+        } else {
+          params.logGroupName = q.logGroupName
         }
         const queryParam = await this.logs.startQuery(params)
 
