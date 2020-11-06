@@ -323,14 +323,14 @@ export default {
             }
             this.cw = new CloudWatch(params)
             this.logs = new CloudWatchLogs(params)
-            this.getDasboardData()
+            this.getDashboardData()
           })
         }
       })
       .catch(err => {}) // eslint-disable-line node/handle-callback-err
   },
   methods: {
-    getDasboardData () {
+    getDashboardData () {
       this.$q.localStorage.set('dashboardInterval', Math.floor(this.interval.value / 86400))
       const now = Date.now() / 1000 | 0
       const endTime = Math.ceil(now / this.interval.period) * this.interval.period
