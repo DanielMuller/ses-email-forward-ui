@@ -310,7 +310,9 @@ export default {
     PieChart
   },
   beforeMount () {
-    this.interval = this.intervalOptions.filter(e => e.value === 14 * 86400)[0]
+    const interval = this.$q.localStorage.getItem('dashboardInterval') || 7
+
+    this.interval = this.intervalOptions.filter(e => e.value === interval * 86400)[0]
     this.$Amplify.Auth.currentAuthenticatedUser()
       .then(user => {
         if (user) {
@@ -329,6 +331,7 @@ export default {
   },
   methods: {
     getDasboardData () {
+      this.$q.localStorage.set('dashboardInterval', Math.floor(this.interval.value / 86400))
       const now = Date.now() / 1000 | 0
       const endTime = Math.ceil(now / this.interval.period) * this.interval.period
       const startTime = endTime - this.interval.value
