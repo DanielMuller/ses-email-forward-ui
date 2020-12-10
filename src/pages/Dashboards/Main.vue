@@ -25,6 +25,8 @@ q-page(padding)
         tr.bg-grey-4
           th.text-left {{ $t('timestamp') }}
           th.text-left {{ $t('reason') }}
+          th.text-left {{ $t('rule') }}
+          th.text-left {{ $t('score') }}
           th.text-left {{ $t('from') }}
           th.text-left {{ $t('recipient') }}
       tbody
@@ -33,6 +35,8 @@ q-page(padding)
         tr(v-for="msg in rejectedLogs" :key="msg.timestamp")
           td.text-left {{msg.timestamp}}
           td.text-left {{msg.reason}}
+          td.text-left {{msg.rule}}
+          td.text-left {{msg.score}}
           td.text-left {{msg.from}}
           td.text-left {{msg.recipient}}
   div.q-mb-lg
@@ -396,7 +400,7 @@ export default {
         {
           name: 'rejected',
           logGroupNames: ['/aws/lambda/sesEmailForward-spam', '/aws/lambda/sesEmailForward-spamassassin'],
-          queryString: 'fields @timestamp as timestamp,reason,from,recipient | filter _logLevel=\'info\' and msg=\'reject\' | sort @timestamp desc | limit 1000'
+          queryString: 'fields @timestamp as timestamp,reason,rule,score,from,recipient | filter _logLevel=\'info\' and msg=\'reject\' | sort @timestamp desc | limit 1000'
         },
         {
           name: 'bounces',

@@ -85,5 +85,7 @@ export default {
   error: 'Errors',
   timestamp: 'Timestamp',
   from: 'From',
-  recipient: 'Recipient'
+  recipient: 'Recipient',
+  rule: 'Rule',
+  score: 'Score'
 }

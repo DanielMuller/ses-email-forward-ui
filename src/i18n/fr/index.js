@@ -83,5 +83,7 @@ export default {
   timestamp: 'Date/Heure',
   from: 'Expéditeur',
   recipient: 'Destinataire',
-  'no-messages': 'Aucun messages à afficher'
+  'no-messages': 'Aucun messages à afficher',
+  rule: 'Règle',
+  score: 'Score'
 }
