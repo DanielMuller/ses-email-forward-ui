@@ -29,6 +29,7 @@ q-page(padding)
           th.text-left {{ $t('score') }}
           th.text-left {{ $t('from') }}
           th.text-left {{ $t('recipient') }}
+          th.text-left Id
       tbody
         tr(v-if="rejectedLogs.length===0")
           td(colspan="4") {{ $t('no_messages') }}
@@ -39,6 +40,7 @@ q-page(padding)
           td.text-left {{msg.score}}
           td.text-left {{msg.from}}
           td.text-left {{msg.recipient}}
+          td.text-left {{msg.messageId}}
   div.q-mb-lg
     q-markup-table
       thead
@@ -50,6 +52,8 @@ q-page(padding)
           th.text-left {{ $t('reason') }}
           th.text-left {{ $t('from') }}
           th.text-left {{ $t('recipient') }}
+          th.text-left Id
+          th.text-left {{ $t('score') }}
       tbody
         tr(v-if="bouncesLogs.length===0")
           td(colspan="2") {{ $t('no_messages') }}
@@ -58,6 +62,8 @@ q-page(padding)
           td.text-left {{msg.reason}}
           td.text-left {{msg.from}}
           td.text-left {{msg.recipient}}
+          td.text-left {{msg.messageId}}
+          td.text-left {{passedScores[msg.messageId]}}
   div.q-mb-lg
     q-markup-table
       thead
@@ -68,6 +74,8 @@ q-page(padding)
           th.text-left {{ $t('timestamp') }}
           th.text-left {{ $t('from') }}
           th.text-left {{ $t('recipient') }}
+          th.text-left Id
+          th.text-left {{ $t('score') }}
       tbody
         tr(v-if="sentLogs.length===0")
           td(colspan="3") {{ $t('no_messages') }}
@@ -75,6 +83,8 @@ q-page(padding)
           td.text-left {{msg.timestamp}}
           td.text-left {{msg.from}}
           td.text-left {{msg.recipient}}
+          td.text-left {{msg.messageId}}
+          td.text-left {{passedScores[msg.messageId]}}
   div.q-mb-lg
     q-markup-table
       thead
@@ -85,6 +95,8 @@ q-page(padding)
           th.text-left {{ $t('timestamp') }}
           th.text-left {{ $t('from') }}
           th.text-left {{ $t('recipient') }}
+          th.text-left Id
+          th.text-left {{ $t('score') }}
       tbody
         tr(v-if="errorLogs.length===0")
           td(colspan="3") {{ $t('no_messages') }}
@@ -92,6 +104,8 @@ q-page(padding)
           td.text-left {{msg.timestamp}}
           td.text-left {{msg.from}}
           td.text-left {{msg.recipient}}
+          td.text-left {{msg.messageId}}
+          td.text-left {{passedScores[msg.messageId]}}
 </template>
 
 <script>
@@ -117,6 +131,8 @@ export default {
       bouncesLogs: [],
       sentLogs: [],
       errorLogs: [],
+      passedScores: {},
+      passedScoresLogs: [],
       metricsReady: 0,
       interval: null,
       intervalOptions: [
@@ -395,29 +411,38 @@ export default {
       this.errorLogs = []
       this.rejectedLogs = []
       this.bouncesLogs = []
+      this.passedScoresLogs = []
+      this.passedScores = {}
 
       const logQueries = [
         {
           name: 'rejected',
           logGroupNames: ['/aws/lambda/sesEmailForward-spam', '/aws/lambda/sesEmailForward-spamassassin'],
-          queryString: 'fields @timestamp as timestamp,reason,rule,score,from,recipient | filter _logLevel=\'info\' and msg=\'reject\' | sort @timestamp desc | limit 1000'
+          queryString: 'fields @timestamp as timestamp,messageId,reason,rule,score,from,recipient | filter _logLevel=\'info\' and msg=\'reject\' | sort @timestamp desc | limit 1000'
         },
         {
           name: 'bounces',
           logGroupName: '/aws/lambda/sesEmailForward-process',
-          queryString: 'fields @timestamp as timestamp,reason,from,recipient | filter _logLevel=\'info\' and msg=\'bounce\' | sort @timestamp desc | limit 1000'
+          queryString: 'fields @timestamp as timestamp,messageId,reason,from,recipient | filter _logLevel=\'info\' and msg=\'bounce\' | sort @timestamp desc | limit 1000'
         },
         {
           name: 'sent',
           logGroupName: '/aws/lambda/sesEmailForward-process',
-          queryString: 'fields @timestamp as timestamp,from,recipient| filter _logLevel=\'info\' and msg=\'sendMessage\' and reason=\'success\'| sort @timestamp desc| limit 1000'
+          queryString: 'fields @timestamp as timestamp,messageId,from,recipient| filter _logLevel=\'info\' and msg=\'sendMessage\' and reason=\'success\'| sort @timestamp desc| limit 1000'
         },
         {
           name: 'error',
           logGroupName: '/aws/lambda/sesEmailForward-process',
-          queryString: 'fields @timestamp as timestamp,from,recipient| filter _logLevel=\'info\' and msg=\'sendMessage\' and reason=\'failure\'| sort @timestamp desc| limit 1000'
+          queryString: 'fields @timestamp as timestamp,messageId,from,recipient| filter _logLevel=\'info\' and msg=\'sendMessage\' and reason=\'failure\'| sort @timestamp desc| limit 1000'
+        },
+        {
+          name: 'passedScores',
+          logGroupName: '/aws/lambda/sesEmailForward-spamassassin',
+          queryString: 'fields @timestamp as timestamp,messageId,reason,rule,score | filter _logLevel=\'info\' and msg=\'pass\' | sort @timestamp desc | limit 1000'
         }
       ]
+      const amountQueries = logQueries.length
+      let queriesDone = 0
       logQueries.forEach(async q => {
         const params = {
           startTime,
@@ -447,7 +472,29 @@ export default {
           })
           return dataLine
         })
+        queriesDone++
+        if (queriesDone === amountQueries) {
+          this.setPassedScores()
+        }
       })
+    },
+    setPassedScores () {
+      const scoresPerMessage = {}
+      this.passedScoresLogs.map(e => {
+        const index = e.rule === 'postmarkapp' ? 1 : 0
+        if (!scoresPerMessage[e.messageId]) {
+          scoresPerMessage[e.messageId] = [-100, -100]
+        }
+        if (e.score) {
+          scoresPerMessage[e.messageId][index] = parseFloat(e.score)
+        }
+        return true
+      })
+      const passedScores = {}
+      for (const [key, value] of Object.entries(scoresPerMessage)) {
+        passedScores[key] = value.join('/')
+      }
+      this.passedScores = passedScores
     },
     labels (tooltipItem, data) {
       const dataset = data.datasets[tooltipItem.datasetIndex]
